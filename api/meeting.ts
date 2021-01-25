@@ -1,6 +1,12 @@
 import {NowRequest, NowResponse} from '@vercel/node';
 
 export default (request: NowRequest, response: NowResponse) => {
-  console.log('ZOOM REQUEST: ', {...request.body});
+  console.log('ZOOM BODY:', {...request.body});
+
+  if (request.headers['authorization'] !== process.env.ZOOM_WEBHOOK_TOKEN) {
+    console.log('AUTH ERROR: ', request.headers['authorization']);
+    return response.status(401);
+  }
+
   response.status(200).send({});
 };
