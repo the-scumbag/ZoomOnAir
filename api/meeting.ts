@@ -14,10 +14,14 @@ export default async (request: NowRequest, response: NowResponse) => {
     return response.status(400).send({});
   }
 
-  const wyze = new Wyze({
+  const options = {
     username: process.env.WYZE_USERNAME,
     password: process.env.WYZE_PASSWORD,
-  });
+  };
+
+  console.log('WYZE LOGIN: ', {...options});
+
+  const wyze = new Wyze(options);
 
   const devices = await wyze.getDeviceList();
   const filtered = devices.filter(
