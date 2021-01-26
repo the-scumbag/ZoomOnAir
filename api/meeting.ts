@@ -9,6 +9,11 @@ export default async (request: NowRequest, response: NowResponse) => {
     return response.status(401);
   }
 
+  const event = request.body.event;
+  if (!event) {
+    return response.status(400).send({});
+  }
+
   const wyze = new Wyze({
     username: process.env.WYZE_USERNAME,
     password: process.env.WYZE_PASSWORD,
@@ -21,7 +26,7 @@ export default async (request: NowRequest, response: NowResponse) => {
       x.nickname.startsWith(devicePrefix),
   );
 
-  const turnOn = request.body.event === 'meeting.started';
+  const turnOn = event === 'meeting.started';
   const promises = filtered.map((device) =>
     turnOn ? wyze.turnOn(device) : wyze.turnOff(device),
   );
