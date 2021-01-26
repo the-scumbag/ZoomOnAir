@@ -5,8 +5,6 @@ const deviceTypes = ['Plug', 'Light'];
 const devicePrefix = 'zoom_';
 
 export default async (request: NowRequest, response: NowResponse) => {
-  console.log('ZOOM BODY:', {...request.body});
-
   if (request.headers['authorization'] !== process.env.ZOOM_WEBHOOK_TOKEN) {
     return response.status(401);
   }
@@ -23,9 +21,10 @@ export default async (request: NowRequest, response: NowResponse) => {
       x.nickname.startsWith(devicePrefix),
   );
 
-  console.log('DEVICES: ', filtered);
-
-  const promises = filtered.map((device) => wyze.turnOn(device));
+  const turnOn = request.body.event === 'meeting.started';
+  const promises = filtered.map((device) =>
+    turnOn ? wyze.turnOn(device) : wyze.turnOff(device),
+  );
   await Promise.all(promises);
 
   response.status(200).send({});
