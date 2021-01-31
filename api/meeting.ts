@@ -19,6 +19,8 @@ export default async (request: NowRequest, response: NowResponse) => {
     password: process.env.WYZE_PASSWORD,
   };
 
+  console.log('connecting to wyze...');
+
   const wyze = new Wyze(options);
   const devices = await wyze.getDeviceList();
   const filtered = devices.filter(
