@@ -30,8 +30,8 @@ export default async (request: NowRequest, response: NowResponse) => {
         x.nickname.startsWith(devicePrefix),
     );
 
-    // const turnOn = event === 'meeting.started';
-    const turnOn = true;
+    const turnOn = event === 'meeting.started';
+    console.log(`${turnOn ? 'Turning on!' : 'Turning off!'}`);
     const promises = filtered.map((device) =>
       turnOn ? wyze.turnOn(device) : wyze.turnOff(device),
     );
