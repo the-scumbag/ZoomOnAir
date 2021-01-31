@@ -7,6 +7,6 @@
     "@vercel/node": "^1.9.0"
   },
   "dependencies": {
-    "wyze-node": "^2.0.3"
+    "wyze-node": "git://github.com/stephen776/wyze-node.git#master"
   }
 }

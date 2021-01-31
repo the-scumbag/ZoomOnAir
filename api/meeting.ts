@@ -19,8 +19,6 @@ export default async (request: NowRequest, response: NowResponse) => {
     password: process.env.WYZE_PASSWORD,
   };
 
-  console.log('CREDS: ', {...options});
-
   const wyze = new Wyze(options);
   const devices = await wyze.getDeviceList();
   const filtered = devices.filter(
@@ -29,7 +27,8 @@ export default async (request: NowRequest, response: NowResponse) => {
       x.nickname.startsWith(devicePrefix),
   );
 
-  const turnOn = event === 'meeting.started';
+  // const turnOn = event === 'meeting.started';
+  const turnOn = true;
   const promises = filtered.map((device) =>
     turnOn ? wyze.turnOn(device) : wyze.turnOff(device),
   );
