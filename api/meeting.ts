@@ -5,19 +5,23 @@ const deviceTypes = ['Plug', 'Light'];
 const devicePrefix = 'zoom_';
 
 export default async (request: NowRequest, response: NowResponse) => {
-  if (request.headers['authorization'] !== process.env.ZOOM_WEBHOOK_TOKEN) {
-    return response.status(401);
-  }
-
   const event = request.body.event;
-  if (!event) {
-    return response.status(400).send({});
+  if (
+    request.headers['authorization'] !== process.env.ZOOM_WEBHOOK_TOKEN ||
+    !event
+  ) {
+    // just return a 200, we don't want zoom to keep retrying for a non-2xx error;
+    return response.status(200).send({});
   }
 
-  const wyze = new Wyze({
+  const options = {
     username: process.env.WYZE_USERNAME,
     password: process.env.WYZE_PASSWORD,
-  });
+  };
+
+  console.log('CREDS: ', {...options});
+
+  const wyze = new Wyze(options);
   const devices = await wyze.getDeviceList();
   const filtered = devices.filter(
     (x) =>
