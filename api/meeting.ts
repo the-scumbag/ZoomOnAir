@@ -21,20 +21,24 @@ export default async (request: NowRequest, response: NowResponse) => {
 
   console.log('connecting to wyze...');
 
-  const wyze = new Wyze(options);
-  const devices = await wyze.getDeviceList();
-  const filtered = devices.filter(
-    (x) =>
-      deviceTypes.includes(x.product_type) &&
-      x.nickname.startsWith(devicePrefix),
-  );
+  try {
+    const wyze = new Wyze(options);
+    const devices = await wyze.getDeviceList();
+    const filtered = devices.filter(
+      (x) =>
+        deviceTypes.includes(x.product_type) &&
+        x.nickname.startsWith(devicePrefix),
+    );
 
-  // const turnOn = event === 'meeting.started';
-  const turnOn = true;
-  const promises = filtered.map((device) =>
-    turnOn ? wyze.turnOn(device) : wyze.turnOff(device),
-  );
-  await Promise.all(promises);
+    // const turnOn = event === 'meeting.started';
+    const turnOn = true;
+    const promises = filtered.map((device) =>
+      turnOn ? wyze.turnOn(device) : wyze.turnOff(device),
+    );
+    await Promise.all(promises);
+  } catch (err) {
+    console.log('WYZE ERROR: ', err);
+  }
 
   response.status(200).send({});
 };
