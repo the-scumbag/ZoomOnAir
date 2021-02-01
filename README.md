@@ -29,4 +29,4 @@ Point vercel at your forked repo. Note the app URL to be used for Zoom setup. Co
 - `WYZE_USERNAME` (_Username for your Wyze account_)
 - `WYZE_PASSWORD` (_The password for your Wyze account_)
 
-** USE SECRET ENV VARIABLES TO ENSURE YOUR PASSWORDS ARE SAFE **
+**USE SECRET ENV VARIABLES TO ENSURE YOUR PASSWORDS ARE SAFE**
