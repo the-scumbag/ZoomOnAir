@@ -14,12 +14,14 @@ export default async (request: NowRequest, response: NowResponse) => {
     return response.status(200).send({});
   }
 
+  console.log('Received zoom event: ', {...event});
+
+  console.log('connecting to wyze...');
+
   const options = {
     username: process.env.WYZE_USERNAME,
     password: process.env.WYZE_PASSWORD,
   };
-
-  console.log('connecting to wyze...');
 
   try {
     const wyze = new Wyze(options);
