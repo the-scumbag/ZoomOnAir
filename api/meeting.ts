@@ -14,7 +14,7 @@ export default async (request: NowRequest, response: NowResponse) => {
     return response.status(200).send({});
   }
 
-  console.log('Received zoom event: ', {...event});
+  console.log('Received zoom event: ', event);
 
   console.log('connecting to wyze...');
 
