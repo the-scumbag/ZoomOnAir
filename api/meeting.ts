@@ -10,7 +10,7 @@ const devicePrefix = 'zoom_';
 export default async (request: NowRequest, response: NowResponse) => {
   console.log('Received zoom event: ', request.body);
   const event = request.body.event;
-  const participant = request.body.payload?.object?.participant;
+  const participant = request.body.payload.object.participant;
   if (participant) console.log('PARTICIPANT JOINED ', participant);
   if (
     request.headers['authorization'] !== process.env.ZOOM_WEBHOOK_TOKEN ||
