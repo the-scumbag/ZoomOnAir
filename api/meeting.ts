@@ -16,10 +16,15 @@ export default async (request: NowRequest, response: NowResponse) => {
     event &&
     participant &&
     (event === participantJoinedEvent || event === participantLeftEvent);
+
+  if (!authValid || !isParticipantEvent) {
+    // just return a 200, we don't want zoom to keep retrying for a non-2xx error;
+    return response.status(200).send({});
+  }
+
   const isValidParticipant = participant.email === process.env.ZOOM_PARTICIPANT;
 
-  if (!authValid || !isParticipantEvent || !isValidParticipant) {
-    // just return a 200, we don't want zoom to keep retrying for a non-2xx error;
+  if (!isValidParticipant) {
     return response.status(200).send({});
   }
 
