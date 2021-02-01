@@ -3,19 +3,22 @@ import Wyze from 'wyze-node';
 
 const deviceTypes = ['Plug', 'Light'];
 const devicePrefix = 'zoom_';
-
-// participant joined: meeting.participant_joined
-// participant left: meeting.participant_left
+const participantJoinedEvent = 'meeting.participant_joined';
+const participantLeftEvent = 'meeting.participant_left';
 
 export default async (request: NowRequest, response: NowResponse) => {
-  console.log('Received zoom event: ', request.body);
+  const authValid =
+    request.headers['authorization'] !== process.env.ZOOM_WEBHOOK_TOKEN;
+
   const event = request.body.event;
   const participant = request.body.payload.object.participant;
-  if (participant) console.log('PARTICIPANT JOINED ', participant);
-  if (
-    request.headers['authorization'] !== process.env.ZOOM_WEBHOOK_TOKEN ||
-    !event
-  ) {
+  const isParticipantEvent =
+    event &&
+    participant &&
+    (event === participantJoinedEvent || event === participantLeftEvent);
+  const isValidParticipant = participant.email === process.env.ZOOM_PARTICIPANT;
+
+  if (!authValid || !isParticipantEvent || !isValidParticipant) {
     // just return a 200, we don't want zoom to keep retrying for a non-2xx error;
     return response.status(200).send({});
   }
@@ -36,11 +39,13 @@ export default async (request: NowRequest, response: NowResponse) => {
         x.nickname.startsWith(devicePrefix),
     );
 
-    const turnOn = event === 'meeting.started';
+    const turnOn = event === participantJoinedEvent;
+
     console.log(`${turnOn ? 'Turning on!' : 'Turning off!'}`);
     const promises = filtered.map((device) =>
       turnOn ? wyze.turnOn(device) : wyze.turnOff(device),
     );
+
     await Promise.all(promises);
   } catch (err) {
     console.log('WYZE ERROR: ', err);
