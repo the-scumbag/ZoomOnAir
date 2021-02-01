@@ -5,6 +5,7 @@ const deviceTypes = ['Plug', 'Light'];
 const devicePrefix = 'zoom_';
 
 export default async (request: NowRequest, response: NowResponse) => {
+  console.log('Received zoom event: ', request.body);
   const event = request.body.event;
   if (
     request.headers['authorization'] !== process.env.ZOOM_WEBHOOK_TOKEN ||
@@ -13,8 +14,6 @@ export default async (request: NowRequest, response: NowResponse) => {
     // just return a 200, we don't want zoom to keep retrying for a non-2xx error;
     return response.status(200).send({});
   }
-
-  console.log('Received zoom event: ', event);
 
   console.log('connecting to wyze...');
 
