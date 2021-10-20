@@ -34,7 +34,7 @@ export default async (request: NowRequest, response: NowResponse) => {
   console.log('Connecting to LIFX...');
 
   const options = {
-    appToken: process.env.LIFX_TOKEN'
+    appToken: process.env.LIFX_TOKEN
   };
 
   try {
