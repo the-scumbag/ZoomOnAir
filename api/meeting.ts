@@ -1,7 +1,6 @@
 import {NowRequest, NowResponse} from '@vercel/node';
-import Wyze from 'wyze-node';
+import Lifx from 'lifxjs';
 
-const deviceTypes = ['Plug', 'Light'];
 const devicePrefix = 'zoom_';
 const participantJoinedEvent = 'meeting.participant_joined';
 const participantLeftEvent = 'meeting.participant_left';
@@ -32,32 +31,31 @@ export default async (request: NowRequest, response: NowResponse) => {
   }
 
   console.log('Zoom participant verified...');
-  console.log('Connecting to Wyze...');
+  console.log('Connecting to LIFX...');
 
   const options = {
-    username: process.env.WYZE_USERNAME,
-    password: process.env.WYZE_PASSWORD,
+    appToken: process.env.LIFX_TOKEN'
   };
 
   try {
-    const wyze = new Wyze(options);
-    const devices = await wyze.getDeviceList();
+    const lifx = new Lifx();
+    lifx.init(options);
+    const devices = await lifx.get.all();
     const filtered = devices.filter(
       (x) =>
-        deviceTypes.includes(x.product_type) &&
-        x.nickname.startsWith(devicePrefix),
+        x.label.startsWith(devicePrefix)
     );
 
     const turnOn = event === participantJoinedEvent;
 
-    console.log(`${turnOn ? 'Turning on!' : 'Turning off!'}`);
+    console.log(`${turnOn ? 'Turning red!' : 'Turning green!'}`);
     const promises = filtered.map((device) =>
-      turnOn ? wyze.turnOn(device) : wyze.turnOff(device),
+      lifx.color.light(officeBulb.id, { hue: (turnOn)?0:120, saturation: 1, brightness: 1 })
     );
 
     await Promise.all(promises);
   } catch (err) {
-    console.log('WYZE ERROR: ', err);
+    console.log('LIFX ERROR: ', err);
   }
 
   response.status(200).send({});
