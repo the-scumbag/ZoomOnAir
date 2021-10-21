@@ -50,7 +50,7 @@ export default async (request: NowRequest, response: NowResponse) => {
 
     console.log(`${turnOn ? 'Turning red!' : 'Turning green!'}`);
     const promises = filtered.map((device) =>
-      lifx.color.light(device.id, { hue: (turnOn)?0:120, saturation: 1, brightness: 1 })
+      lifx.color.light(device.id, { rgb: (turnOn)?'255,0,0':'0,255,0' })
     );
 
     await Promise.all(promises);
